@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "alwaysStrict": true,
+    "target": "ES6"
+  }
+}
