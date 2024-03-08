@@ -1,18 +1,19 @@
 import Car from './car.mjs';
+import Road from './road.mjs';
+import { resetCanvas } from './utils.mjs';
 
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 
-const car = new Car(100, 100, 30, 50);
+resetCanvas(canvas);
 
-const resetCanvas = () => {
-  canvas.height = window.innerHeight;
-  canvas.width = 200;
-};
+const road = new Road(canvas.width / 2, canvas.width * 0.9);
+const car = new Car(road.getLaneCenter(1), 100, 30, 50);
 
 const loop = () => {
-  resetCanvas();
+  resetCanvas(canvas);
 
+  road.draw(ctx);
   car.update(ctx);
 
   requestAnimationFrame(loop);

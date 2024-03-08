@@ -20,9 +20,9 @@ class Car {
     this.controls = new Controls();
   }
 
+  /** @param  {CanvasRenderingContext2D} ctx */
   update = (ctx) => {
     this.#move();
-
     this.draw(ctx);
   };
 
@@ -52,9 +52,7 @@ class Car {
     this.y -= Math.cos(this.angle) * this.speed;
   };
 
-  /**
-   * @param {CanvasRenderingContext2D} ctx
-   * */
+  /** @param {CanvasRenderingContext2D} ctx */
   draw = (ctx) => {
     const middleX = -this.width / 2;
     const middleY = -this.height / 2;
