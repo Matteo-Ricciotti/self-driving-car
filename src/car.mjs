@@ -1,4 +1,5 @@
 import Controls from './controls.mjs';
+import Sensor from './sensor.mjs';
 
 class Car {
   constructor(x, y, width, height) {
@@ -17,13 +18,15 @@ class Car {
     this.maxReverseSpeed = this.maxSpeed * 0.4;
     this.maxAngle = 0.5;
 
+    this.sensors = new Sensor(this);
     this.controls = new Controls();
   }
 
   /** @param  {CanvasRenderingContext2D} ctx */
   update = (ctx) => {
     this.#move();
-    this.draw(ctx);
+    this.sensors.update();
+    this.#draw(ctx);
   };
 
   #move = () => {
@@ -53,7 +56,7 @@ class Car {
   };
 
   /** @param {CanvasRenderingContext2D} ctx */
-  draw = (ctx) => {
+  #draw = (ctx) => {
     const middleX = -this.width / 2;
     const middleY = -this.height / 2;
 
@@ -64,6 +67,7 @@ class Car {
     ctx.fillRect(middleX, middleY, this.width, this.height);
 
     ctx.restore();
+    this.sensors.draw(ctx);
   };
 }
 

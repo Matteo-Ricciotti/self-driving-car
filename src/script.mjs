@@ -13,8 +13,13 @@ const car = new Car(road.getLaneCenter(1), 100, 30, 50);
 const loop = () => {
   resetCanvas(canvas);
 
+  ctx.save();
+  ctx.translate(0, -car.y + canvas.height * 0.7);
+
   road.draw(ctx);
   car.update(ctx);
+
+  ctx.restore();
 
   requestAnimationFrame(loop);
 };
