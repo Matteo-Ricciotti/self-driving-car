@@ -2,6 +2,12 @@ import Controls from './controls.mjs';
 import Sensor from './sensor.mjs';
 
 class Car {
+  /**
+   * @param {number} x
+   * @param {number} y
+   * @param {number} width
+   * @param {number} height
+   */
   constructor(x, y, width, height) {
     this.x = x;
     this.y = y;
