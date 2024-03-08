@@ -17,7 +17,7 @@ const loop = () => {
   ctx.translate(0, -car.y + canvas.height * 0.7);
 
   road.draw(ctx);
-  car.update(ctx);
+  car.update(ctx, road.borders);
 
   ctx.restore();
 

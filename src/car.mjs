@@ -22,10 +22,13 @@ class Car {
     this.controls = new Controls();
   }
 
-  /** @param  {CanvasRenderingContext2D} ctx */
-  update = (ctx) => {
+  /**
+   * @param  {CanvasRenderingContext2D} ctx
+   * @param  {Array<Array<{}>>} roadBorders
+   * */
+  update = (ctx, roadBorders) => {
     this.#move();
-    this.sensors.update();
+    this.sensors.update(roadBorders);
     this.#draw(ctx);
   };
 

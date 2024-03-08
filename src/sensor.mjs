@@ -1,5 +1,5 @@
 import Car from './car.mjs';
-import { lerp } from './utils.mjs';
+import { getIntersection, lerp } from './utils.mjs';
 
 class Sensor {
   /** @param {Car} car */
@@ -11,10 +11,40 @@ class Sensor {
     this.raySpread = Math.PI / 2;
 
     this.rays = [];
+    this.readings = [];
   }
 
-  update = () => {
+  /**
+   * @param  {Array<Array<{}>>} roadBorders
+   * */
+  update = (roadBorders) => {
     this.#castRays();
+    this.readings = [];
+
+    for (const ray of this.rays) {
+      this.readings.push(this.#getReading(ray, roadBorders));
+    }
+  };
+
+  /**
+   * @param  {Array<{}>} ray
+   * @param  {Array<Array<{}>>} roadBorders
+   * */
+  #getReading = (ray, roadBorders) => {
+    const touches = [];
+
+    for (const roadBorder of roadBorders) {
+      const touch = getIntersection(ray[0], ray[1], roadBorder[0], roadBorder[1]);
+
+      if (touch) touches.push(touch);
+    }
+
+    if (!touches.length) return null;
+
+    const offsets = touches.map((t) => t.offset);
+    const minOffset = Math.min(...offsets);
+
+    return touches.find((t) => t.offset === minOffset);
   };
 
   #castRays = () => {
@@ -41,11 +71,24 @@ class Sensor {
   /** @param {CanvasRenderingContext2D} ctx */
   draw = (ctx) => {
     for (let i = 0; i < this.rayCount; ++i) {
+      let end = this.rays[i][1];
+
+      if (this.readings[i]) {
+        end = this.readings[i];
+      }
+
       ctx.beginPath();
       ctx.lineWidth = 2;
       ctx.strokeStyle = 'yellow';
       ctx.moveTo(this.rays[i][0].x, this.rays[i][0].y);
-      ctx.lineTo(this.rays[i][1].x, this.rays[i][1].y);
+      ctx.lineTo(end.x, end.y);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'black';
+      ctx.moveTo(this.rays[i][1].x, this.rays[i][1].y);
+      ctx.lineTo(end.x, end.y);
       ctx.stroke();
     }
   };
