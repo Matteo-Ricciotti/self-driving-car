@@ -1,8 +1,15 @@
-body {
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
   background-color: darkgray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  text-align: center;
 }
 
 canvas {
