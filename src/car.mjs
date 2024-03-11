@@ -1,5 +1,6 @@
 import Controls from './controls.mjs';
 import Sensor from './sensor.mjs';
+import { polysIntersect } from './utils.mjs';
 
 class Car {
   /**
@@ -24,6 +25,8 @@ class Car {
     this.maxReverseSpeed = this.maxSpeed * 0.4;
     this.maxAngle = 0.5;
 
+    this.damaged = false;
+
     this.sensors = new Sensor(this);
     this.controls = new Controls();
   }
@@ -33,9 +36,51 @@ class Car {
    * @param  {Array<Array<{}>>} roadBorders
    * */
   update = (ctx, roadBorders) => {
-    this.#move();
-    this.sensors.update(roadBorders);
-    this.#draw(ctx);
+    if (!this.damaged) {
+      this.#move();
+      this.polygon = this.#createPolygon();
+      this.damaged = this.#assessDamage(roadBorders);
+    }
+
+    this.sensors.update(roadBorders, ctx);
+  };
+
+  /**
+   * @param  {Array<Array<{}>>} roadBorders
+   * */
+  #assessDamage = (roadBorders) => {
+    for (const roadBorder of roadBorders) {
+      if (polysIntersect(this.polygon, roadBorder)) return true;
+    }
+  };
+
+  #createPolygon = () => {
+    const points = [];
+
+    const radius = Math.hypot(this.width, this.height) / 2;
+    const alpha = Math.atan2(this.width, this.height);
+
+    points.push({
+      x: this.x - Math.sin(this.angle - alpha) * radius,
+      y: this.y - Math.cos(this.angle - alpha) * radius,
+    });
+
+    points.push({
+      x: this.x - Math.sin(this.angle + alpha) * radius,
+      y: this.y - Math.cos(this.angle + alpha) * radius,
+    });
+
+    points.push({
+      x: this.x - Math.sin(Math.PI + this.angle - alpha) * radius,
+      y: this.y - Math.cos(Math.PI + this.angle - alpha) * radius,
+    });
+
+    points.push({
+      x: this.x - Math.sin(Math.PI + this.angle + alpha) * radius,
+      y: this.y - Math.cos(Math.PI + this.angle + alpha) * radius,
+    });
+
+    return points;
   };
 
   #move = () => {
@@ -65,18 +110,21 @@ class Car {
   };
 
   /** @param {CanvasRenderingContext2D} ctx */
-  #draw = (ctx) => {
-    const middleX = -this.width / 2;
-    const middleY = -this.height / 2;
+  draw = (ctx) => {
+    if (this.damaged) {
+      ctx.fillStyle = 'gray';
+    } else {
+      ctx.fillStyle = 'black';
+    }
 
-    ctx.save();
-    ctx.translate(this.x, this.y);
-    ctx.rotate(-this.angle);
+    ctx.beginPath();
+    ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
 
-    ctx.fillRect(middleX, middleY, this.width, this.height);
+    for (let i = 1; i < this.polygon.length; ++i) {
+      ctx.lineTo(this.polygon[i].x, this.polygon[i].y);
+    }
 
-    ctx.restore();
-    this.sensors.draw(ctx);
+    ctx.fill();
   };
 }
 

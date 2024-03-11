@@ -16,14 +16,17 @@ class Sensor {
 
   /**
    * @param  {Array<Array<{}>>} roadBorders
+   * @param  {CanvasRenderingContext2D} ctx
    * */
-  update = (roadBorders) => {
+  update = (roadBorders, ctx) => {
     this.#castRays();
     this.readings = [];
 
     for (const ray of this.rays) {
       this.readings.push(this.#getReading(ray, roadBorders));
     }
+
+    this.#draw(ctx);
   };
 
   /**
@@ -69,7 +72,7 @@ class Sensor {
   };
 
   /** @param {CanvasRenderingContext2D} ctx */
-  draw = (ctx) => {
+  #draw = (ctx) => {
     for (let i = 0; i < this.rayCount; ++i) {
       let end = this.rays[i][1];
 

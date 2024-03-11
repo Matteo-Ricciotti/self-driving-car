@@ -18,6 +18,7 @@ const loop = () => {
 
   road.draw(ctx);
   car.update(ctx, road.borders);
+  car.draw(ctx);
 
   ctx.restore();
 
