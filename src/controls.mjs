@@ -4,8 +4,19 @@ class Controls {
   right = false;
   reverse = false;
 
-  constructor() {
-    this.#addKeyboardListeners();
+  /**
+   * @param {'KEYS' | 'DUMMY'} controlType
+   */
+  constructor(controlType) {
+    switch (controlType) {
+      case 'KEYS':
+        this.#addKeyboardListeners();
+        break;
+
+      case 'DUMMY':
+        this.forward = true;
+        break;
+    }
   }
 
   #addKeyboardListeners = () => {

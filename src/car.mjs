@@ -8,8 +8,10 @@ class Car {
    * @param {number} y
    * @param {number} width
    * @param {number} height
+   * @param {'KEYS' | 'DUMMY'} controlType
+   * @param {number} maxSpeed
    */
-  constructor(x, y, width, height) {
+  constructor(x, y, width, height, controlType, maxSpeed = 5) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -21,36 +23,48 @@ class Car {
     this.friction = 0.05;
     this.angle = 0;
 
-    this.maxSpeed = 5;
+    this.maxSpeed = maxSpeed;
     this.maxReverseSpeed = this.maxSpeed * 0.4;
     this.maxAngle = 0.5;
 
     this.damaged = false;
 
-    this.sensors = new Sensor(this);
-    this.controls = new Controls();
+    this.controlType = controlType;
+    this.controls = new Controls(controlType);
+
+    if (controlType !== 'DUMMY') {
+      this.sensors = new Sensor(this);
+    }
   }
 
   /**
    * @param  {CanvasRenderingContext2D} ctx
    * @param  {Array<Array<{}>>} roadBorders
+   * @param  {Array<Car>} traffic
    * */
-  update = (ctx, roadBorders) => {
+  update = (ctx, roadBorders, traffic) => {
     if (!this.damaged) {
       this.#move();
       this.polygon = this.#createPolygon();
-      this.damaged = this.#assessDamage(roadBorders);
+      this.damaged = this.#assessDamage(roadBorders, traffic);
     }
 
-    this.sensors.update(roadBorders, ctx);
+    if (this.sensors) {
+      this.sensors.update(roadBorders, traffic);
+    }
   };
 
   /**
    * @param  {Array<Array<{}>>} roadBorders
+   * @param  {Array<Car>} traffic
    * */
-  #assessDamage = (roadBorders) => {
+  #assessDamage = (roadBorders, traffic) => {
     for (const roadBorder of roadBorders) {
       if (polysIntersect(this.polygon, roadBorder)) return true;
+    }
+
+    for (const car of traffic) {
+      if (polysIntersect(this.polygon, car.polygon)) return true;
     }
   };
 
@@ -109,12 +123,15 @@ class Car {
     this.y -= Math.cos(this.angle) * this.speed;
   };
 
-  /** @param {CanvasRenderingContext2D} ctx */
-  draw = (ctx) => {
+  /**
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {string} color
+   * */
+  draw = (ctx, color) => {
     if (this.damaged) {
       ctx.fillStyle = 'gray';
     } else {
-      ctx.fillStyle = 'black';
+      ctx.fillStyle = color;
     }
 
     ctx.beginPath();
@@ -125,6 +142,10 @@ class Car {
     }
 
     ctx.fill();
+
+    if (this.sensors) {
+      this.sensors.draw(ctx);
+    }
   };
 }
 

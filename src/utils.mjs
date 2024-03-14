@@ -29,7 +29,7 @@ export const getIntersection = (a, b, c, d) => {
     const t = tTop / bottom;
     const u = uTop / bottom;
 
-    if (t >= 0 && t <= 1 && u >= 0 && 0 <= 1) {
+    if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
       return {
         x: lerp(a.x, b.x, t),
         y: lerp(a.y, b.y, t),

@@ -16,24 +16,23 @@ class Sensor {
 
   /**
    * @param  {Array<Array<{}>>} roadBorders
-   * @param  {CanvasRenderingContext2D} ctx
+   * @param  {Array<Car>} traffic
    * */
-  update = (roadBorders, ctx) => {
+  update = (roadBorders, traffic) => {
     this.#castRays();
     this.readings = [];
 
     for (const ray of this.rays) {
-      this.readings.push(this.#getReading(ray, roadBorders));
+      this.readings.push(this.#getReading(ray, roadBorders, traffic));
     }
-
-    this.#draw(ctx);
   };
 
   /**
    * @param  {Array<{}>} ray
    * @param  {Array<Array<{}>>} roadBorders
+   * @param  {Array<Car>} traffic
    * */
-  #getReading = (ray, roadBorders) => {
+  #getReading = (ray, roadBorders, traffic) => {
     const touches = [];
 
     for (const roadBorder of roadBorders) {
@@ -41,6 +40,18 @@ class Sensor {
 
       if (touch) touches.push(touch);
     }
+
+    for (const car of traffic) {
+      const poly = car.polygon;
+      for (let i = 0; i < poly.length; ++i) {
+        const value = getIntersection(ray[0], ray[1], poly[i], poly[(i + 1) % poly.length]);
+        if (value) {
+          touches.push(value);
+        }
+      }
+    }
+
+    console.log(touches);
 
     if (!touches.length) return null;
 
@@ -72,7 +83,7 @@ class Sensor {
   };
 
   /** @param {CanvasRenderingContext2D} ctx */
-  #draw = (ctx) => {
+  draw = (ctx) => {
     for (let i = 0; i < this.rayCount; ++i) {
       let end = this.rays[i][1];
 
