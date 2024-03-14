@@ -51,8 +51,6 @@ class Sensor {
       }
     }
 
-    console.log(touches);
-
     if (!touches.length) return null;
 
     const offsets = touches.map((t) => t.offset);
