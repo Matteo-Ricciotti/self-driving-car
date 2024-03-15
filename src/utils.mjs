@@ -1,9 +1,17 @@
 /**
  * @param {HTMLCanvasElement} canvas
  */
-export const resetCanvas = (canvas) => {
+export const resetCarCanvas = (canvas) => {
   canvas.height = window.innerHeight;
   canvas.width = 200;
+};
+
+/**
+ * @param {HTMLCanvasElement} canvas
+ */
+export const resetNetworkCanvas = (canvas) => {
+  canvas.height = window.innerHeight;
+  canvas.width = 300;
 };
 
 /**
@@ -60,4 +68,17 @@ export const polysIntersect = (poly1, poly2) => {
   }
 
   return false;
+};
+
+/**
+ * @param {number} value
+ */
+export const getRGBA = (value) => {
+  const alpha = Math.abs(value);
+
+  const R = value < 0 ? 0 : 255;
+  const G = R;
+  const B = value > 0 ? 0 : 255;
+
+  return 'rgba(' + R + ',' + G + ',' + B + ',' + alpha + ')';
 };

@@ -1,37 +1,49 @@
+import Visualizer from './Visualizer.mjs';
 import Car from './car.mjs';
 import Road from './road.mjs';
-import { resetCanvas } from './utils.mjs';
+import { resetCarCanvas, resetNetworkCanvas } from './utils.mjs';
 
-const canvas = document.querySelector('canvas');
-const ctx = canvas.getContext('2d');
+/** @type {HTMLCanvasElement} */
+const carCanvas = document.querySelector('#car-canvas');
+/** @type {HTMLCanvasElement} */
+const networkCanvas = document.querySelector('#network-canvas');
 
-resetCanvas(canvas);
+const carCtx = carCanvas.getContext('2d');
+const networkCtx = networkCanvas.getContext('2d');
 
-const road = new Road(canvas.width / 2, canvas.width * 0.9);
-const car = new Car(road.getLaneCenter(1), 100, 30, 50, 'KEYS');
+resetCarCanvas(carCanvas);
+resetNetworkCanvas(networkCanvas);
+
+const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
+const car = new Car(road.getLaneCenter(1), 100, 30, 50, 'AI');
 const traffic = [new Car(road.getLaneCenter(1), -100, 30, 50, 'DUMMY', 3)];
 
-const loop = () => {
+const loop = (time) => {
   for (let i = 0; i < traffic.length; ++i) {
-    traffic[i].update(ctx, road.borders, []);
+    traffic[i].update(carCtx, road.borders, []);
   }
 
-  car.update(ctx, road.borders, traffic);
+  car.update(carCtx, road.borders, traffic);
 
-  resetCanvas(canvas);
+  resetCarCanvas(carCanvas);
+  resetNetworkCanvas(networkCanvas);
 
-  ctx.save();
-  ctx.translate(0, -car.y + canvas.height * 0.7);
+  carCtx.save();
+  carCtx.translate(0, -car.y + carCanvas.height * 0.7);
 
-  road.draw(ctx);
+  road.draw(carCtx);
 
   for (let i = 0; i < traffic.length; ++i) {
-    traffic[i].draw(ctx, 'red');
+    traffic[i].draw(carCtx, 'red');
   }
 
-  car.draw(ctx, 'blue');
+  car.draw(carCtx, 'blue');
 
-  ctx.restore();
+  carCtx.restore();
+
+  networkCtx.lineDashOffset = -time / 50;
+
+  Visualizer.drawNetwork(networkCtx, car.brain);
 
   requestAnimationFrame(loop);
 };

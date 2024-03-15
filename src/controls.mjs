@@ -5,7 +5,7 @@ class Controls {
   reverse = false;
 
   /**
-   * @param {'KEYS' | 'DUMMY'} controlType
+   * @param {'KEYS' | 'DUMMY' | 'AI'} controlType
    */
   constructor(controlType) {
     switch (controlType) {
