@@ -1,3 +1,6 @@
+import Car from './car.mjs';
+import Road from './road.mjs';
+
 /**
  * @param {HTMLCanvasElement} canvas
  */
@@ -81,4 +84,29 @@ export const getRGBA = (value) => {
   const B = value > 0 ? 0 : 255;
 
   return 'rgba(' + R + ',' + G + ',' + B + ',' + alpha + ')';
+};
+
+/**
+ * @param {Road} road
+ * @param {number} n
+ */
+export const generateCars = (road, n) => {
+  const cars = [];
+
+  for (let i = 1; i <= n; ++i) {
+    cars.push(new Car(road.getLaneCenter(1), 100, 30, 50, 'AI'));
+  }
+
+  return cars;
+};
+
+/**
+ * @param {Car} car
+ */
+export const saveBrain = (car) => {
+  localStorage.setItem('best-brain', JSON.stringify(car.brain));
+};
+
+export const discardBrain = () => {
+  localStorage.removeItem('best-brain');
 };

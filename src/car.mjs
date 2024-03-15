@@ -42,11 +42,10 @@ class Car {
   }
 
   /**
-   * @param  {CanvasRenderingContext2D} ctx
    * @param  {Array<Array<{}>>} roadBorders
    * @param  {Array<Car>} traffic
    * */
-  update = (ctx, roadBorders, traffic) => {
+  update = (roadBorders, traffic) => {
     if (!this.damaged) {
       this.#move();
       this.polygon = this.#createPolygon();
@@ -140,8 +139,9 @@ class Car {
   /**
    * @param {CanvasRenderingContext2D} ctx
    * @param {string} color
+   * @param {boolean} withSensors
    * */
-  draw = (ctx, color) => {
+  draw = (ctx, color, withSensors = false) => {
     if (this.damaged) {
       ctx.fillStyle = 'gray';
     } else {
@@ -157,7 +157,7 @@ class Car {
 
     ctx.fill();
 
-    if (this.sensors) {
+    if (this.sensors && withSensors) {
       this.sensors.draw(ctx);
     }
   };
