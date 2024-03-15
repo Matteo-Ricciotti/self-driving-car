@@ -26,7 +26,7 @@ class Car {
 
     this.maxSpeed = maxSpeed;
     this.maxReverseSpeed = this.maxSpeed * 0.4;
-    this.maxAngle = 0.5;
+    this.maxAngle = null;
 
     this.damaged = false;
 
@@ -129,8 +129,10 @@ class Car {
       if (this.controls.right) this.angle -= 0.03 * flip;
     }
 
-    if (this.angle > this.maxAngle) this.angle = this.maxAngle;
-    if (this.angle < -this.maxAngle) this.angle = -this.maxAngle;
+    if (this.maxAngle) {
+      if (this.angle > this.maxAngle) this.angle = this.maxAngle;
+      if (this.angle < -this.maxAngle) this.angle = -this.maxAngle;
+    }
 
     this.x -= Math.sin(this.angle) * this.speed;
     this.y -= Math.cos(this.angle) * this.speed;
