@@ -33,6 +33,10 @@ const traffic = [
   new Car(road.getLaneCenter(1), -600, 30, 50, 'DUMMY', 3),
   new Car(road.getLaneCenter(1), -900, 30, 50, 'DUMMY', 3),
   new Car(road.getLaneCenter(2), -900, 30, 50, 'DUMMY', 3),
+  new Car(road.getLaneCenter(0), -1100, 30, 50, 'DUMMY', 3),
+  new Car(road.getLaneCenter(1), -1100, 30, 50, 'DUMMY', 3),
+  new Car(road.getLaneCenter(1), -1300, 30, 50, 'DUMMY', 3),
+  new Car(road.getLaneCenter(2), -1300, 30, 50, 'DUMMY', 3),
 ];
 
 let bestCar = cars[0];
