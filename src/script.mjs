@@ -1,4 +1,4 @@
-import Visualizer from './Visualizer.mjs';
+import Visualizer from './visualizer.mjs';
 import Car from './car.mjs';
 import NeuralNetwork from './neural-network.mjs';
 import Road from './road.mjs';
