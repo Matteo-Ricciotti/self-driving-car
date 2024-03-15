@@ -1,5 +1,6 @@
 import Visualizer from './Visualizer.mjs';
 import Car from './car.mjs';
+import NeuralNetwork from './neural-network.mjs';
 import Road from './road.mjs';
 import {
   discardBrain,
@@ -24,13 +25,27 @@ resetNetworkCanvas(networkCanvas);
 
 const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 const cars = generateCars(road, PARALLELIZATION_CARS);
-const traffic = [new Car(road.getLaneCenter(1), -100, 30, 50, 'DUMMY', 3)];
+const traffic = [
+  new Car(road.getLaneCenter(0), -300, 30, 50, 'DUMMY', 3),
+  new Car(road.getLaneCenter(1), -100, 30, 50, 'DUMMY', 3),
+  new Car(road.getLaneCenter(2), -300, 30, 50, 'DUMMY', 3),
+  new Car(road.getLaneCenter(0), -600, 30, 50, 'DUMMY', 3),
+  new Car(road.getLaneCenter(1), -600, 30, 50, 'DUMMY', 3),
+  new Car(road.getLaneCenter(1), -900, 30, 50, 'DUMMY', 3),
+  new Car(road.getLaneCenter(2), -900, 30, 50, 'DUMMY', 3),
+];
 
 let bestCar = cars[0];
 const bestBrain = localStorage.getItem('best-brain');
 
 if (bestBrain) {
-  bestCar.brain = JSON.parse(bestBrain);
+  for (let i = 0; i < cars.length; ++i) {
+    cars[i].brain = JSON.parse(bestBrain);
+
+    if (i !== 0) {
+      NeuralNetwork.mutate(cars[i].brain, 0.1);
+    }
+  }
 }
 
 /**
