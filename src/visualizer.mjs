@@ -6,8 +6,11 @@ class Visualizer {
   /**
    * @param {CanvasRenderingContext2D} ctx
    * @param {NeuralNetwork} network
+   * @param {number} time
    */
-  static drawNetwork(ctx, network) {
+  static drawNetwork(ctx, network, time) {
+    ctx.lineDashOffset = -time / 25;
+
     const margin = 50;
 
     const left = margin;

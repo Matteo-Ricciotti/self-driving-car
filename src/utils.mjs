@@ -3,18 +3,11 @@ import Road from './road.mjs';
 
 /**
  * @param {HTMLCanvasElement} canvas
+ * @param {number} width
  */
-export const resetCarCanvas = (canvas) => {
+export const resetCanvas = (canvas, width) => {
   canvas.height = window.innerHeight;
-  canvas.width = 200;
-};
-
-/**
- * @param {HTMLCanvasElement} canvas
- */
-export const resetNetworkCanvas = (canvas) => {
-  canvas.height = window.innerHeight;
-  canvas.width = 300;
+  canvas.width = width;
 };
 
 /**

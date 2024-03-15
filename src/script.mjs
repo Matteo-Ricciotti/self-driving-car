@@ -2,13 +2,7 @@ import Visualizer from './visualizer.mjs';
 import Car from './car.mjs';
 import NeuralNetwork from './neural-network.mjs';
 import Road from './road.mjs';
-import {
-  discardBrain,
-  generateCars,
-  resetCarCanvas,
-  resetNetworkCanvas,
-  saveBrain,
-} from './utils.mjs';
+import { discardBrain, generateCars, resetCanvas, saveBrain } from './utils.mjs';
 
 const PARALLELIZATION_CARS = 1;
 
@@ -20,11 +14,12 @@ const networkCanvas = document.querySelector('#network-canvas');
 const carCtx = carCanvas.getContext('2d');
 const networkCtx = networkCanvas.getContext('2d');
 
-resetCarCanvas(carCanvas);
-resetNetworkCanvas(networkCanvas);
+resetCanvas(carCanvas, 200);
+resetCanvas(networkCanvas, 300);
 
 const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 const cars = generateCars(road, PARALLELIZATION_CARS);
+
 const traffic = [
   new Car(road.getLaneCenter(0), -300, 30, 50, 'DUMMY', 3),
   new Car(road.getLaneCenter(1), -100, 30, 50, 'DUMMY', 3),
@@ -48,15 +43,12 @@ if (bestBrain) {
     cars[i].brain = JSON.parse(bestBrain);
 
     if (i !== 0) {
-      NeuralNetwork.mutate(cars[i].brain, 0.05);
+      NeuralNetwork.mutate(cars[i].brain, 0.1);
     }
   }
 }
 
-/**
- * @param {number} time
- */
-const loop = (time) => {
+const loop = (time = 0) => {
   for (let i = 0; i < traffic.length; ++i) {
     traffic[i].update(road.borders, []);
   }
@@ -65,18 +57,19 @@ const loop = (time) => {
     car.update(road.borders, traffic);
   }
 
+  // Add here rules to find the best car
   bestCar = cars.find((car) => car.y === Math.min(...cars.map((c) => c.y)));
 
-  resetCarCanvas(carCanvas);
-  resetNetworkCanvas(networkCanvas);
+  resetCanvas(carCanvas, 200);
+  resetCanvas(networkCanvas, 300);
 
   carCtx.save();
   carCtx.translate(0, -bestCar.y + carCanvas.height * 0.7);
 
   road.draw(carCtx);
 
-  for (let i = 0; i < traffic.length; ++i) {
-    traffic[i].draw(carCtx, 'red');
+  for (const el of traffic) {
+    el.draw(carCtx, 'red');
   }
 
   carCtx.globalAlpha = 0.2;
@@ -91,25 +84,21 @@ const loop = (time) => {
 
   carCtx.restore();
 
-  networkCtx.lineDashOffset = -time / 50;
-
-  Visualizer.drawNetwork(networkCtx, bestCar.brain);
+  Visualizer.drawNetwork(networkCtx, bestCar.brain, time);
 
   requestAnimationFrame(loop);
 };
 
-document.querySelectorAll('button').forEach((button) =>
-  button.addEventListener('click', (e) => {
-    const id = 'id' in e.target ? e.target.id : null;
+document.addEventListener('click', (e) => {
+  const id = 'id' in e.target ? e.target.id : null;
 
-    if (id === 'save') {
-      saveBrain(bestCar);
-    }
+  if (id === 'save') {
+    saveBrain(bestCar);
+  }
 
-    if (id === 'discard') {
-      discardBrain();
-    }
-  }),
-);
+  if (id === 'discard') {
+    discardBrain();
+  }
+});
 
 loop(0);
