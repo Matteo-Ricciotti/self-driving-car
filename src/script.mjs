@@ -10,7 +10,7 @@ import {
   saveBrain,
 } from './utils.mjs';
 
-const PARALLELIZATION_CARS = 100;
+const PARALLELIZATION_CARS = 1;
 
 /** @type {HTMLCanvasElement} */
 const carCanvas = document.querySelector('#car-canvas');
@@ -37,6 +37,7 @@ const traffic = [
   new Car(road.getLaneCenter(1), -1100, 30, 50, 'DUMMY', 3),
   new Car(road.getLaneCenter(1), -1300, 30, 50, 'DUMMY', 3),
   new Car(road.getLaneCenter(2), -1300, 30, 50, 'DUMMY', 3),
+  new Car(road.getLaneCenter(0), -1425, 30, 50, 'DUMMY', 3),
 ];
 
 let bestCar = cars[0];
@@ -47,7 +48,7 @@ if (bestBrain) {
     cars[i].brain = JSON.parse(bestBrain);
 
     if (i !== 0) {
-      NeuralNetwork.mutate(cars[i].brain, 0.1);
+      NeuralNetwork.mutate(cars[i].brain, 0.05);
     }
   }
 }
