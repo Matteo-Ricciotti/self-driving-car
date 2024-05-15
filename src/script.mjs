@@ -2,9 +2,10 @@ import Visualizer from './visualizer.mjs';
 import Car from './car.mjs';
 import NeuralNetwork from './neural-network.mjs';
 import Road from './road.mjs';
-import { discardBrain, generateCars, resetCanvas, saveBrain } from './utils.mjs';
+import { discardBrain, generateCars, generateTraffic, resetCanvas, saveBrain } from './utils.mjs';
 
-const PARALLELIZATION_CARS = 1;
+const PARALLELIZATION_CARS = 1000;
+const BEHAVIOR_VARIATION = 0.1;
 
 /** @type {HTMLCanvasElement} */
 const carCanvas = document.querySelector('#car-canvas');
@@ -19,21 +20,7 @@ resetCanvas(networkCanvas, 300);
 
 const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 const cars = generateCars(road, PARALLELIZATION_CARS);
-
-const traffic = [
-  new Car(road.getLaneCenter(0), -300, 30, 50, 'DUMMY', 3),
-  new Car(road.getLaneCenter(1), -100, 30, 50, 'DUMMY', 3),
-  new Car(road.getLaneCenter(2), -300, 30, 50, 'DUMMY', 3),
-  new Car(road.getLaneCenter(0), -600, 30, 50, 'DUMMY', 3),
-  new Car(road.getLaneCenter(1), -600, 30, 50, 'DUMMY', 3),
-  new Car(road.getLaneCenter(1), -900, 30, 50, 'DUMMY', 3),
-  new Car(road.getLaneCenter(2), -900, 30, 50, 'DUMMY', 3),
-  new Car(road.getLaneCenter(0), -1100, 30, 50, 'DUMMY', 3),
-  new Car(road.getLaneCenter(1), -1100, 30, 50, 'DUMMY', 3),
-  new Car(road.getLaneCenter(1), -1300, 30, 50, 'DUMMY', 3),
-  new Car(road.getLaneCenter(2), -1300, 30, 50, 'DUMMY', 3),
-  new Car(road.getLaneCenter(0), -1425, 30, 50, 'DUMMY', 3),
-];
+const traffic = generateTraffic(road, 8);
 
 let bestCar = cars[0];
 const bestBrain = localStorage.getItem('best-brain');
@@ -43,7 +30,7 @@ if (bestBrain) {
     cars[i].brain = JSON.parse(bestBrain);
 
     if (i !== 0) {
-      NeuralNetwork.mutate(cars[i].brain, 0.1);
+      NeuralNetwork.mutate(cars[i].brain, BEHAVIOR_VARIATION);
     }
   }
 }

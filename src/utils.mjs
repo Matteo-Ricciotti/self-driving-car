@@ -94,6 +94,63 @@ export const generateCars = (road, n) => {
 };
 
 /**
+ * @param {Road} road
+ * @param {number} carsNumber
+ */
+export const generateTraffic = (road, carsNumber) => {
+  /** @type {Car[]} */
+  const traffic = [];
+
+  /** @type {number[]} */
+  const rows = [];
+
+  let sum = 0;
+
+  while (sum !== carsNumber) {
+    let randomDensity = 0;
+
+    while (randomDensity === 0 || sum + randomDensity > carsNumber) {
+      randomDensity = Math.floor(Math.random() * road.lanes);
+    }
+
+    rows.push(randomDensity);
+
+    sum = Math.min(sum + randomDensity, carsNumber);
+  }
+
+  for (let i = 0; i < rows.length; ++i) {
+    /** @type {number[]} */
+    const filledLanes = [];
+
+    for (let j = 0; j < rows[i]; ++j) {
+      let newCarLaneIndex;
+
+      while (
+        typeof newCarLaneIndex !== 'number' ||
+        filledLanes.find((l) => l === newCarLaneIndex)
+      ) {
+        newCarLaneIndex = Math.floor(Math.random() * road.lanes);
+      }
+
+      filledLanes.push(newCarLaneIndex);
+
+      const newCar = new Car(
+        road.getLaneCenter(newCarLaneIndex),
+        -250 * (i + 1),
+        30,
+        50,
+        'DUMMY',
+        3,
+      );
+
+      traffic.push(newCar);
+    }
+  }
+
+  return traffic;
+};
+
+/**
  * @param {Car} car
  */
 export const saveBrain = (car) => {

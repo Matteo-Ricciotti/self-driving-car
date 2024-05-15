@@ -6,7 +6,7 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "dependencies": {
+  "devDependencies": {
     "prettier": "^3.2.5"
   }
 }
